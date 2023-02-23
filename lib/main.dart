@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 
 void main() => runApp(const LoginApp());
@@ -10,13 +12,24 @@ class LoginApp extends StatelessWidget {
     return MaterialApp(
       title: 'Login App',
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: const LoginPage(),
+      home: LoginPageState(),
     );
   }
 }
 
-class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
+class LoginPageState extends StatefulWidget {
+  @override
+  LoginPage createState() => LoginPage();
+}
+
+class LoginPage extends State<LoginPageState> {
+  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
+  void _goToHomePage(BuildContext context) {
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) => AddSubtractPage()));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,13 +45,15 @@ class LoginPage extends StatelessWidget {
             children: [
               const Text('Login', style: TextStyle(fontSize: 30)),
               const SizedBox(height: 32.0),
-              const TextField(
+              TextField(
+                controller: usernameController,
                 decoration: InputDecoration(
                   hintText: 'Enter your username',
                 ),
               ),
               const SizedBox(height: 16.0),
-              const TextField(
+              TextField(
+                controller: passwordController,
                 obscureText: true,
                 decoration: InputDecoration(
                   hintText: 'Enter your password',
@@ -48,8 +63,24 @@ class LoginPage extends StatelessWidget {
               ElevatedButton(
                 child: const Text('Login'),
                 onPressed: () {
-                  
-                   _goToHomePage(context);
+                  if (usernameController.text == 'admin' &&
+                      passwordController.text == '123') {
+                    _goToHomePage(context);
+                  } else {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: Text('Error'),
+                        content: Text('Incorrect username or password.'),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            child: Text('OK'),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
                 },
               ),
             ],
@@ -61,6 +92,8 @@ class LoginPage extends StatelessWidget {
 }
 
 class AddSubtractPage extends StatefulWidget {
+  const AddSubtractPage({super.key});
+
   @override
   _AddSubtractPageState createState() => _AddSubtractPageState();
 }
@@ -93,45 +126,45 @@ class _AddSubtractPageState extends State<AddSubtractPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Add/Subtract"),
+        title: const Text("Add/Subtract"),
       ),
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             TextField(
               controller: _num1Controller,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: "Number 1",
               ),
               keyboardType: TextInputType.number,
             ),
             TextField(
               controller: _num2Controller,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: "Number 2",
               ),
               keyboardType: TextInputType.number,
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 ElevatedButton(
                   onPressed: _calculateResult,
-                  child: Text("+"),
+                  child: const Text("+"),
                 ),
                 ElevatedButton(
                   onPressed: _calculateSubtractResult,
-                  child: Text("-"),
+                  child: const Text("-"),
                 ),
               ],
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             Text(
               "Result: $_result",
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 24.0,
                 fontWeight: FontWeight.bold,
               ),
@@ -142,9 +175,3 @@ class _AddSubtractPageState extends State<AddSubtractPage> {
     );
   }
 }
-  void _goToHomePage(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => AddSubtractPage()),
-    );
-  }
